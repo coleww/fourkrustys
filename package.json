@@ -1,0 +1,17 @@
+{
+  "name": "fourkrustys",
+  "version": "1.0.0",
+  "description": "i'm seeing double here!",
+  "type": "module",
+  "main": "index.js",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "deep-object-diff": "^1.1.9",
+    "node-fetch": "^3.3.2"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "cole",
+  "license": "MIT"
+}
