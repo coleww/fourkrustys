@@ -1,9 +1,9 @@
-import * as cheerio from 'cheerio';
-import fetch from 'node-fetch';
-import { diff } from 'deep-object-diff';
+import * as cheerio from 'cheerio'
+import fetch from 'node-fetch'
+import { diff } from 'deep-object-diff'
 
-const BASELINE = 'https://www.example.com';
-const COMPARE = 'https://www.preprod.example.com';
+const BASELINE = 'https://example.com'
+const COMPARE = 'https://preprod.example.com'
 
 const PATHS = [
   '/',
@@ -22,28 +22,28 @@ const getEllies = ($, tag) => $(tag)
 const getScripties = ($) => $('script')
   .get()
   .map((link) => link.attribs['type'] === "application/ld+json" && JSON.parse(link.children[0].data))
-  .filter(x => !!x);
+  .filter(x => !!x)
 
 const sort = (arr, type) => {
   return arr.sort((a, b) => {
-    const nameFn = nameFnMap[type];
-    const aName = nameFn(a);
-    const bName = nameFn(b);
+    const nameFn = nameFnMap[type]
+    const aName = nameFn(a)
+    const bName = nameFn(b)
     if (aName < bName) {
-      return -1;
+      return -1
     }
     if (aName > bName) {
-      return 1;
+      return 1
     }
-    return 0;
-  });
+    return 0
+  })
 }
 
 const getSEO = async (url) => {
-  const response = await fetch(url);
-  const body = await response.text();
-  const $ = cheerio.load(body);
-  const title = $('title').text();
+  const response = await fetch(url)
+  const body = await response.text()
+  const $ = cheerio.load(body)
+  const title = $('title').text()
   const links = sort(getEllies($, 'link'), 'link')
   const metas = sort(getEllies($, 'meta'), 'meta')
   const jsonLD = sort(getScripties($), 'script')
@@ -56,11 +56,15 @@ const getSEO = async (url) => {
   }
 }
 
-const results = PATHS.forEach(async (path) => {
-  const base = await getSEO(`${BASELINE}${path}`);
-  const compare = await getSEO(`${COMPARE}${path}`);
-  console.log(path)
-  console.log(diff(base, compare))
-  console.log('~~~~~~~~~~')
-})
-
+let i = 0
+let pid = setInterval(async () => {
+  const path = PATHS[i++]
+  const base = await getSEO(`${BASELINE}${path}`)
+  const compare = await getSEO(`${COMPARE}${path}`)
+  const diffed = diff(base, compare)
+  const hasDiff = Object.keys(diffed).length
+  const emoji = hasDiff ? '🚨' : '✅'
+  console.log(`${path} ${emoji}`)
+  if (hasDiff) console.log(diff)
+  if (i >= PATHS.length) clearInterval(pid)
+}, 1000 + Math.random() * 500)

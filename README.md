@@ -3,6 +3,8 @@ FOURKRUSTYS
 
 https://www.youtube.com/watch?v=xxc7S2EyMGk
 
+Compare SEO tags on a set of paths on 2 domains.
+
 ## setup 
 ```
 npm install
